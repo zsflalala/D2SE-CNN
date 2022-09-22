@@ -10,10 +10,9 @@ Therefore, removing noise in SAR images is of great significance for improving t
 
 
 ## Dependencies
-python 3.6  
-Pytorch 1.0  
+MegEngine1.8
+Python 3.7
 scipy 1.2.1  
-h5py 3.0.0  
 Pillow 6.0.0  
 scikit-image 0.17.2  
 scikit-learn 0.22.1
@@ -39,10 +38,21 @@ B2SE-CNN_dataset
 
 ## Training
 
-For training B2SE-CNN on NYUD v2 training dataset, you can run:
+For training B2SE-CNN on BSD500 or NWPUVHR-10 training dataset, you can run:
 
 ```
 python train.py
+or
+python train.py --datapath ./data/NWPUVHR --noisedatapath noise_0.8 --gtdatapath mask_gray --epoch 1000 --savefilename best.pth.tar
 ```
+
 You can download our trained model from [Baidu Netdisk](https://pan.baidu.com/s/1UuH194wLiVPf_TC291HrnA?pwd=D2SE) (Code: D2SE).
 
+## Evaluation
+
+For testing BS-Net on BSD500 or NWPUVHR-10 testing dataset, you can run:
+```
+python test.py
+or
+python train.py --datapath ./data/NWPUVHR --noisedatapath noise_0.8 --gtdatapath mask_gray --loadpath best.pth.tar
+```
