@@ -25,8 +25,10 @@ import argparse
 from loaddata import *
 from Model import *
 
+# 定义测试相关参数，包括加载路径（loadpath）、批处理大小（batchsize）、裁剪大小（cropsize）、测试数据集根路径（datapath）
+# 噪声图路径（noisedatapath）、真值图路径（gtdatapath）
 parser = argparse.ArgumentParser(description="B2SE-CNN testing")
-parser.add_argument('--path','--p',type=str,default='best.pth.tar',
+parser.add_argument('--loadpath','--lp',type=str,default='best.pth.tar',
                     help='load your trianed model file(default="best.pth.tar")')
 parser.add_argument('--batchsize','--b',type=int,default=8)
 parser.add_argument('--cropsize','--cz',type=int,default=256,help="Image crop size(default=256)")
@@ -93,7 +95,7 @@ def quality(img,img_out,mask,PSNR_img,SSIM_img,MSE_img,PSNR_imgout,SSIM_imgout,M
 
 model = D2SE_CNN()
 # 加载训练好的模型
-checkpoint = mge.load(args.path)
+checkpoint = mge.load(args.loadpath)
 state_dict = checkpoint['state_dict']
 model.load_state_dict(state_dict)
 
@@ -107,6 +109,7 @@ crop_size = args.cropsize
 criterion = F.nn.l1_loss
 # criterion = F.nn.square_loss
 
+# 建立测试集
 test_dataset = SAR_Data(args.datapath, args.noisedatapath,args.gtdatapath,crop_size, training_set="test")
 test_sampler = SequentialSampler(test_dataset,batch_size=batch_size)
 test_dataloader = data.DataLoader(test_dataset,test_sampler,num_workers=6)

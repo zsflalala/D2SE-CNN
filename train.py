@@ -23,6 +23,8 @@ import argparse
 from loaddata import *
 from Model import *
 
+# 定义训练相关参数，包括训练数据集根路径（datapath）、噪声图路径（noisedatapath）、真值图路径（gtdatapath）、保存文件名（savefilename）
+# 批处理大小（batchsize）、裁剪大小（cropsize）、是否加载已训练模型（resume）、学习率（learning_rate）、训练次数（epoch）
 parser = argparse.ArgumentParser(description="B2SE-CNN training")
 parser.add_argument('--datapath','--dp',type=str,default='./data/NWPUVHR',
                     help='choose one root datapath(default="./data/NWPUVHR")')
@@ -81,17 +83,17 @@ batch_size = args.batchsize
 # 定义裁剪图片的大小 256*256
 crop_size = args.cropsize
 
-#这里是数据集文件夹的路径名
+# 建立训练集
 train_dataset = SAR_Data(args.datapath, args.noisedatapath,args.gtdatapath,crop_size, training_set="train") #里面是图片的tensor数据,(3,256,236)
 train_sampler = data.RandomSampler(train_dataset,batch_size=batch_size)
 train_dataloader = data.DataLoader(train_dataset,train_sampler,num_workers=6)
-
+# 建立验证集
 val_dataset = SAR_Data(args.datapath, args.noisedatapath,args.gtdatapath,crop_size, training_set="val")
 val_sampler = data.RandomSampler(val_dataset,batch_size=batch_size)
 val_dataloader = data.DataLoader(val_dataset,val_sampler,num_workers=6)
-
+# 定义模型
 model = D2SE_CNN()
-
+# 是否加载已训练好的模型
 if args.resume != '':
     Checkpoint=mge.load(args.resume)
     state_dict = Checkpoint['state_dict']
@@ -148,6 +150,7 @@ for epoch in range(num_epochs):
     epoch_list.append(epoch)
     loss_list.append(epoch_loss)
     print('Epoch {}/{} ,Train Loss: {:.8f}'.format(epoch, num_epochs - 1, epoch_loss))
+    # 每20个epoch就验证一次
     if epoch % 20 == 0 and epoch != 0:
         model.eval()
         running_loss = 0
@@ -160,6 +163,7 @@ for epoch in range(num_epochs):
             running_loss += loss.item()
         epoch_loss = running_loss / len(val_dataset)
         print('Epoch {}/{} ,Val Loss (MSE): {:.8f}'.format(epoch, num_epochs - 1, epoch_loss))
+        # 保存验证过程中最好的训练损失模型
         if epoch_loss < best_loss:
             best_loss = epoch_loss
             best_epoch = epoch
@@ -167,7 +171,7 @@ for epoch in range(num_epochs):
             # 如果产生最好的loss值就存储
             save_checkpoint({"best_epoch":best_epoch,"best_epoch_loss":epoch_loss,"state_dict":model.state_dict()},
                             args.savefilename)
-
+# 计算训练epoch的总时间
 time_elapsed = time.time() - since
 # 显示loss函数曲线图
 show_loss(epoch_list,loss_list)
