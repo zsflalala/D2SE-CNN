@@ -21,7 +21,7 @@ scikit-learn 0.22.1
 
 #### BSD500 & NWPUVHR-10
 
-You may download the dataset from [[BaiduNetDisk](https://pan.baidu.com/s/1fhM6EWaT6MZ5wc0kkupYCw?pwd=D2SE) （ShareCode：D2SE）, and unzip it to the ./data folder. You will have the following directory structure:
+You may download the dataset from [BaiduNetDisk](https://pan.baidu.com/s/1fhM6EWaT6MZ5wc0kkupYCw?pwd=D2SE) （ShareCode：D2SE）, and unzip it to the ./data folder. You will have the following directory structure:
 ```
 B2SE-CNN_dataset
 |_ BSD500_NEW
